@@ -28,15 +28,21 @@ const registerUser = async (payload) => {
     }
   }
 
+  // শুধু এই তিনটা role self-register করতে পারবে
+  const allowedRoles = [USER_ROLES.TENANT, USER_ROLES.LANDLORD, USER_ROLES.RESIDENT];
+  const userRole = role && allowedRoles.includes(role) ? role : USER_ROLES.TENANT;
+
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = await prisma.user.create({
     data: {
-      fullName: fullName, // 👈 strictly value, not String
+      fullName: fullName,
       phone: phone,
       email: email,
       password: hashedPassword,
-      role: role || USER_ROLES.RESIDENT,
+      role: userRole,
+      // RESIDENT auto-approved, বাকিরা admin approval লাগবে
+      isApproved: userRole === USER_ROLES.RESIDENT,
     },
   });
 
@@ -62,6 +68,14 @@ const loginUser = async (payload) => {
 
   if (!user) {
     throw new Error('User not found');
+  }
+
+  if (!user.isActive) {
+    throw new Error('Account is inactive');
+  }
+
+  if (!user.isApproved) {
+    throw new Error('Account not approved yet');
   }
 
   if (!user.password) {
@@ -119,6 +133,7 @@ const socialLoginUser = async (payload) => {
         phone: `SOCIAL-${Date.now()}`,
         password: null,
         role: USER_ROLES.RESIDENT,
+        isApproved: true,
       },
     });
   }
