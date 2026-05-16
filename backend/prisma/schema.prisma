@@ -1,0 +1,125 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               Int      @id @default(autoincrement())
+  fullName         String
+  phone            String   @unique
+  email            String?  @unique
+  password         String?
+  role             Role     @default(TENANT)
+  isActive         Boolean  @default(true)
+  isApproved       Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  houses           House[]               @relation("LandlordHouses")
+  bookings         Booking[]             @relation("TenantBookings")
+  landlordBookings Booking[]             @relation("LandlordBookings")
+  applications     RentalApplication[]
+}
+
+model House {
+  id              Int         @id @default(autoincrement())
+  title           String
+  description     String
+  address         String
+  area            String
+  rentAmount      Float
+  bedrooms        Int
+  bathrooms       Int
+  balconies       Int?
+  floorNo         Int?
+  sizeInSqft      Float?
+  availableFrom   DateTime?
+  status          HouseStatus @default(PENDING)
+  rejectionReason String?
+  isPublished     Boolean     @default(false)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  landlordId      Int
+  landlord        User        @relation("LandlordHouses", fields: [landlordId], references: [id])
+
+  bookings        Booking[]
+  applications    RentalApplication[]
+}
+
+model Booking {
+  id              Int           @id @default(autoincrement())
+  tenantId        Int
+  landlordId      Int
+  houseId         Int
+  message         String
+  moveInDate      DateTime
+  status          BookingStatus @default(PENDING)
+  rejectionReason String?
+  landlordNote    String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  tenant          User              @relation("TenantBookings", fields: [tenantId], references: [id])
+  landlord        User              @relation("LandlordBookings", fields: [landlordId], references: [id])
+  house           House             @relation(fields: [houseId], references: [id])
+  rentalAgreement RentalAgreement?
+}
+
+model RentalApplication {
+  id        Int               @id @default(autoincrement())
+  tenantId  Int
+  houseId   Int
+  status    ApplicationStatus @default(PENDING)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  tenant    User              @relation(fields: [tenantId], references: [id])
+  house     House             @relation(fields: [houseId], references: [id])
+}
+
+model RentalAgreement {
+  id        Int      @id @default(autoincrement())
+  bookingId Int      @unique
+  pdfUrl    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  booking   Booking  @relation(fields: [bookingId], references: [id])
+}
+
+model AppSetting {
+  id                     Int      @id @default(1)
+  agreementFooterEnabled Boolean  @default(true)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+}
+
+enum Role {
+  TENANT
+  LANDLORD
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum HouseStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum BookingStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}

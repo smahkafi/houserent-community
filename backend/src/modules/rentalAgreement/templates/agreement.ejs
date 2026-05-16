@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Rental Agreement</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+            line-height: 1.6;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            margin-bottom: 15px;
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 12px;
+            text-align: center;
+            color: #555;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Rental Agreement</h2>
+
+    <div class="section">
+        <strong>Tenant Name:</strong>
+        <%= booking.tenant.fullName %>
+    </div>
+
+    <div class="section">
+        <strong>Phone:</strong>
+        <%= booking.tenant.phone %>
+    </div>
+
+    <div class="section">
+        <strong>House:</strong>
+        <%= booking.house.title %>
+    </div>
+
+    <div class="section">
+        <strong>Address:</strong>
+        <%= booking.house.address %>
+    </div>
+
+    <div class="section">
+        <strong>Rent Amount:</strong>
+        <%= booking.house.rentAmount %> BDT
+    </div>
+
+    <div class="section">
+        <strong>Move-in Date:</strong>
+        <%= new Date(booking.moveInDate).toDateString() %>
+    </div>
+
+    <div class="section">
+        <strong>Agreement Date:</strong>
+        <%= new Date().toDateString() %>
+    </div>
+
+    <% if (showFooter) { %>
+        <div class="footer">
+            এটি একটি সিস্টেম জেনারেটেড চুক্তিপত্র।
+        </div>
+        <% } %>
+
+</body>
+
+</html>
