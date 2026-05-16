@@ -102,6 +102,7 @@ model AppSetting {
 enum Role {
   TENANT
   LANDLORD
+  RESIDENT
   ADMIN
   SUPER_ADMIN
 }
