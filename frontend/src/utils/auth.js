@@ -30,3 +30,16 @@ export const clearAuth = () => {
   removeToken();
   removeUser();
 };
+
+export const isLoggedIn = () => !!getToken();
+
+export const getRoleDashboard = (role) => {
+  const map = {
+    TENANT: "/tenant/dashboard",
+    LANDLORD: "/landlord/dashboard",
+    RESIDENT: "/resident/dashboard",
+    ADMIN: "/admin/dashboard",
+    SUPER_ADMIN: "/super-admin/dashboard",
+  };
+  return map[role] || "/login";
+};
