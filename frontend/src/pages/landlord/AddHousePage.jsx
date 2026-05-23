@@ -16,6 +16,8 @@ function AddHousePage() {
     rentAmount: "",
     bedrooms: "",
     bathrooms: "",
+    attachedBathrooms: "",
+    commonBathrooms: "",
     balconies: "",
     floorNo: "",
     totalFloors: "",
@@ -41,6 +43,8 @@ function AddHousePage() {
           rentAmount: parseFloat(formData.rentAmount),
           bedrooms: parseInt(formData.bedrooms),
           bathrooms: parseInt(formData.bathrooms),
+          attachedBathrooms: formData.attachedBathrooms ? parseInt(formData.attachedBathrooms) : undefined,
+          commonBathrooms: formData.commonBathrooms ? parseInt(formData.commonBathrooms) : undefined,
           balconies: formData.balconies ? parseInt(formData.balconies) : undefined,
           floorNo: formData.floorNo ? parseInt(formData.floorNo) : undefined,
           totalFloors: formData.totalFloors ? parseInt(formData.totalFloors) : undefined,
@@ -67,7 +71,6 @@ function AddHousePage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950 px-4 py-10 text-white">
       <div className="mx-auto max-w-2xl">
 
-        {/* Header */}
         <div className="mb-8">
           <button
             onClick={() => navigate("/landlord/dashboard")}
@@ -84,7 +87,6 @@ function AddHousePage() {
           </p>
         </div>
 
-        {/* Form */}
         <div className="rounded-3xl border border-white/10 bg-white/5 p-7 backdrop-blur-md">
           {error && (
             <div className="mb-6 rounded-2xl border border-red-400/30 bg-red-500/10 p-4 text-sm text-red-100">
@@ -169,46 +171,48 @@ function AddHousePage() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="mb-2 block text-sm font-medium text-slate-200">
-                  Bedrooms <span className="text-red-400">*</span>
-                </label>
-                <input
-                  type="number"
-                  name="bedrooms"
-                  value={formData.bedrooms}
-                  onChange={handleChange}
-                  placeholder="e.g. 2"
-                  className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-emerald-300"
-                  required
-                />
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-slate-200">
-                  Bathrooms <span className="text-red-400">*</span>
-                </label>
-                <input
-                  type="number"
-                  name="bathrooms"
-                  value={formData.bathrooms}
-                  onChange={handleChange}
-                  placeholder="e.g. 2"
-                  className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-emerald-300"
-                  required
-                />
-              </div>
+            {/* Bedrooms */}
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-200">
+                Bedrooms <span className="text-red-400">*</span>
+              </label>
+              <input
+                type="number"
+                name="bedrooms"
+                value={formData.bedrooms}
+                onChange={handleChange}
+                placeholder="e.g. 2"
+                className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-emerald-300"
+                required
+              />
             </div>
 
+            {/* Bathrooms */}
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-200">
+                Total Bathrooms <span className="text-red-400">*</span>
+              </label>
+              <input
+                type="number"
+                name="bathrooms"
+                value={formData.bathrooms}
+                onChange={handleChange}
+                placeholder="e.g. 2"
+                className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-emerald-300"
+                required
+              />
+            </div>
+
+            {/* Attached & Common Bathrooms */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-200">
-                  Balconies
+                  Attached Bathrooms
                 </label>
                 <input
                   type="number"
-                  name="balconies"
-                  value={formData.balconies}
+                  name="attachedBathrooms"
+                  value={formData.attachedBathrooms}
                   onChange={handleChange}
                   placeholder="e.g. 1"
                   className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-emerald-300"
@@ -216,12 +220,12 @@ function AddHousePage() {
               </div>
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-200">
-                  Balconies
+                  Common Bathrooms
                 </label>
                 <input
                   type="number"
-                  name="balconies"
-                  value={formData.balconies}
+                  name="commonBathrooms"
+                  value={formData.commonBathrooms}
                   onChange={handleChange}
                   placeholder="e.g. 1"
                   className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-emerald-300"
@@ -229,6 +233,22 @@ function AddHousePage() {
               </div>
             </div>
 
+            {/* Balconies */}
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-200">
+                Balconies
+              </label>
+              <input
+                type="number"
+                name="balconies"
+                value={formData.balconies}
+                onChange={handleChange}
+                placeholder="e.g. 1"
+                className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-emerald-300"
+              />
+            </div>
+
+            {/* Floor No, Total Floors, Size */}
             <div className="grid grid-cols-3 gap-4">
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-200">

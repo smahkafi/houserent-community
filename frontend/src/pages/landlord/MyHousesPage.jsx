@@ -111,7 +111,15 @@ function MyHousesPage() {
                 <div className="space-y-1 text-sm text-slate-300">
                   <p>📍 {house.address}</p>
                   <p>💰 BDT {house.rentAmount.toLocaleString()} / month</p>
-                  <p>🛏 {house.bedrooms} bed &nbsp; 🚿 {house.bathrooms} bath</p>
+                  <p>🛏 {house.bedrooms} bedroom(s)</p>
+                  <p>
+                    🚿 {house.bathrooms} bathroom(s)
+                    {house.attachedBathrooms ? ` (${house.attachedBathrooms} attached` : ""}
+                    {house.commonBathrooms ? `, ${house.commonBathrooms} common)` : house.attachedBathrooms ? ")" : ""}
+                  </p>
+                  {house.balconies > 0 && (
+                    <p>🏡 {house.balconies} balcon(ies)</p>
+                  )}
                   {house.floorNo && house.totalFloors && (
                     <p>🏢 Floor {house.floorNo} of {house.totalFloors}</p>
                   )}
@@ -127,14 +135,3 @@ function MyHousesPage() {
                     Rejected: {house.rejectionReason}
                   </div>
                 )}
-              </div>
-            ))}
-          </div>
-        )}
-
-      </div>
-    </div>
-  );
-}
-
-export default MyHousesPage;
