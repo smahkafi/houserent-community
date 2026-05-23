@@ -33,7 +33,9 @@ model House {
   area            String
   rentAmount      Float
   bedrooms        Int
-  bathrooms       Int
+  bathrooms         Int
+attachedBathrooms Int?
+commonBathrooms   Int?
   balconies       Int?
   floorNo         Int?
   totalFloors     Int?
