@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import userRoutes from "./modules/user/user.route.js";
 import authRoutes from "./modules/auth/auth.route.js";
 import adminRoutes from "./modules/admin/admin.route.js";
@@ -9,6 +10,11 @@ import rentalAgreementRoutes from "./modules/rentalAgreement/rentalAgreement.rou
 import settingsRoutes from "./modules/admin/settings.route.js";
 
 const app = express();
+
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true,
+}));
 
 app.use(express.json());
 
