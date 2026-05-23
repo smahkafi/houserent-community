@@ -10,6 +10,7 @@ export const createHouseSchema = z.object({
   bathrooms: z.number().int().min(1),
   balconies: z.number().int().min(0).optional().nullable(),
   floorNo: z.number().int().min(0).optional().nullable(),
+  totalFloors: z.number().int().min(1).optional().nullable(),
   sizeInSqft: z.number().positive().optional().nullable(),
   availableFrom: z.string().optional().nullable(),
 });
@@ -24,6 +25,7 @@ export const updateHouseSchema = z.object({
   bathrooms: z.number().int().min(1).optional(),
   balconies: z.number().int().min(0).optional().nullable(),
   floorNo: z.number().int().min(0).optional().nullable(),
+  totalFloors: z.number().int().min(1).optional().nullable(),
   sizeInSqft: z.number().positive().optional().nullable(),
   availableFrom: z.string().optional().nullable(),
 });

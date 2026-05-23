@@ -36,6 +36,7 @@ model House {
   bathrooms       Int
   balconies       Int?
   floorNo         Int?
+  totalFloors     Int?
   sizeInSqft      Float?
   availableFrom   DateTime?
   status          HouseStatus @default(PENDING)
