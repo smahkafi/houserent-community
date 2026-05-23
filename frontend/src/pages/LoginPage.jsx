@@ -26,9 +26,9 @@ function LoginPage() {
     setLoading(true);
     try {
       const result = await loginUser(formData);
-      setToken(result.data.token);
-      setUser(result.data.user);
-      navigate(getRoleDashboard(result.data.user.role), { replace: true });
+      setToken(result.token);
+      setUser(result.data);
+      navigate(getRoleDashboard(result.data.role), { replace: true });
     } catch (err) {
       setError(
         err?.response?.data?.error ||

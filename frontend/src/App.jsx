@@ -3,6 +3,7 @@ import MainLayout from "./layouts/MainLayout.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import RentalAgreementsPage from "./pages/RentalAgreementsPage.jsx";
+import TenantDashboardPage from "./pages/tenant/TenantDashboardPage.jsx";
 import { getToken, getUser } from "./utils/auth";
 
 function ProtectedRoute({ children, allowedRoles }) {
@@ -34,7 +35,7 @@ function App() {
             path="/tenant/dashboard"
             element={
               <ProtectedRoute allowedRoles={["TENANT"]}>
-                <div className="p-10 text-white">Tenant Dashboard</div>
+                <TenantDashboardPage />
               </ProtectedRoute>
             }
           />
@@ -44,7 +45,7 @@ function App() {
             path="/landlord/dashboard"
             element={
               <ProtectedRoute allowedRoles={["LANDLORD"]}>
-                <div className="p-10 text-white">Landlord Dashboard</div>
+                <div className="p-10 text-white">Landlord Dashboard — Coming Soon</div>
               </ProtectedRoute>
             }
           />
@@ -54,7 +55,7 @@ function App() {
             path="/resident/dashboard"
             element={
               <ProtectedRoute allowedRoles={["RESIDENT"]}>
-                <div className="p-10 text-white">Resident Dashboard</div>
+                <div className="p-10 text-white">Resident Dashboard — Coming Soon</div>
               </ProtectedRoute>
             }
           />
@@ -64,7 +65,7 @@ function App() {
             path="/admin/dashboard"
             element={
               <ProtectedRoute allowedRoles={["ADMIN", "SUPER_ADMIN"]}>
-                <div className="p-10 text-white">Admin Dashboard</div>
+                <div className="p-10 text-white">Admin Dashboard — Coming Soon</div>
               </ProtectedRoute>
             }
           />
@@ -74,7 +75,7 @@ function App() {
             path="/super-admin/dashboard"
             element={
               <ProtectedRoute allowedRoles={["SUPER_ADMIN"]}>
-                <div className="p-10 text-white">Super Admin Dashboard</div>
+                <div className="p-10 text-white">Super Admin Dashboard — Coming Soon</div>
               </ProtectedRoute>
             }
           />
