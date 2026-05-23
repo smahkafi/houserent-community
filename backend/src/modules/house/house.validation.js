@@ -5,16 +5,7 @@ export const createHouseSchema = z.object({
   description: z.string().min(10),
   address: z.string().min(3),
   area: z.string().min(2),
-  rentAmount: z.number().positive(),
-  bedrooms: z.number().int().min(1),
-  bathrooms: z.number().int().min(1),
-  attachedBathrooms: z.number().int().min(0).optional().nullable(),
-  commonBathrooms: z.number().int().min(0).optional().nullable(),
-  balconies: z.number().int().min(0).optional().nullable(),
-  floorNo: z.number().int().min(0).optional().nullable(),
   totalFloors: z.number().int().min(1).optional().nullable(),
-  sizeInSqft: z.number().positive().optional().nullable(),
-  availableFrom: z.string().optional().nullable(),
 });
 
 export const updateHouseSchema = z.object({
@@ -22,16 +13,7 @@ export const updateHouseSchema = z.object({
   description: z.string().min(10).optional(),
   address: z.string().min(3).optional(),
   area: z.string().min(2).optional(),
-  rentAmount: z.number().positive().optional(),
-  bedrooms: z.number().int().min(1).optional(),
-  bathrooms: z.number().int().min(1).optional(),
-  attachedBathrooms: z.number().int().min(0).optional().nullable(),
-  commonBathrooms: z.number().int().min(0).optional().nullable(),
-  balconies: z.number().int().min(0).optional().nullable(),
-  floorNo: z.number().int().min(0).optional().nullable(),
   totalFloors: z.number().int().min(1).optional().nullable(),
-  sizeInSqft: z.number().positive().optional().nullable(),
-  availableFrom: z.string().optional().nullable(),
 });
 
 export const rejectHouseSchema = z.object({

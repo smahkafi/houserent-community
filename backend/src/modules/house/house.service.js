@@ -11,24 +11,36 @@ const createHouse = async (payload, user) => {
   });
 };
 
-const approveHouse = async (id, user) => {
+const approveHouse = async (id) => {
   const house = await prisma.house.findUnique({
     where: { id: Number(id) },
   });
 
-  if (!house) {
-    throw new Error("House not found");
-  }
-
-  if (house.status === "APPROVED") {
-    throw new Error("House already approved");
-  }
+  if (!house) throw new Error("House not found");
+  if (house.status === "APPROVED") throw new Error("House already approved");
 
   return await prisma.house.update({
     where: { id: Number(id) },
     data: {
       status: "APPROVED",
       isPublished: true,
+    },
+  });
+};
+
+const rejectHouse = async (id, rejectionReason) => {
+  const house = await prisma.house.findUnique({
+    where: { id: Number(id) },
+  });
+
+  if (!house) throw new Error("House not found");
+
+  return await prisma.house.update({
+    where: { id: Number(id) },
+    data: {
+      status: "REJECTED",
+      rejectionReason,
+      isPublished: false,
     },
   });
 };
@@ -40,9 +52,24 @@ const getAllApprovedHouses = async () => {
       isPublished: true,
       isDeleted: false,
     },
-    orderBy: {
-      createdAt: "desc",
+    include: {
+      landlord: {
+        select: {
+          id: true,
+          fullName: true,
+          phone: true,
+          email: true,
+        },
+      },
+      rentalUnits: {
+        where: {
+          status: "APPROVED",
+          isPublished: true,
+          isAvailable: true,
+        },
+      },
     },
+    orderBy: { createdAt: "desc" },
   });
 };
 
@@ -54,15 +81,33 @@ const getSingleApprovedHouse = async (id) => {
       isPublished: true,
       isDeleted: false,
     },
+    include: {
+      landlord: {
+        select: {
+          id: true,
+          fullName: true,
+          phone: true,
+          email: true,
+        },
+      },
+      rentalUnits: {
+        where: {
+          status: "APPROVED",
+          isPublished: true,
+          isAvailable: true,
+        },
+      },
+    },
   });
 };
 
 const getMyHouses = async (user) => {
   return await prisma.house.findMany({
-    where: user.role === "LANDLORD" ? { landlordId: user.userId } : {},
-    orderBy: {
-      createdAt: "desc",
+    where: user.role === "LANDLORD" ? { landlordId: user.userId, isDeleted: false } : { isDeleted: false },
+    include: {
+      rentalUnits: true,
     },
+    orderBy: { createdAt: "desc" },
   });
 };
 
@@ -71,14 +116,8 @@ const softDeleteHouse = async (id, reason, user) => {
     where: { id: Number(id) },
   });
 
-  if (!house) {
-    throw new Error("House not found");
-  }
-
-  if (house.isDeleted) {
-    throw new Error("House is already deleted");
-  }
-
+  if (!house) throw new Error("House not found");
+  if (house.isDeleted) throw new Error("House is already deleted");
   if (user.role === "LANDLORD" && house.landlordId !== user.userId) {
     throw new Error("You are not allowed to delete this house");
   }
@@ -106,21 +145,10 @@ const requestRestoreHouse = async (id, reason, user) => {
     where: { id: Number(id) },
   });
 
-  if (!house) {
-    throw new Error("House not found");
-  }
-
-  if (!house.isDeleted) {
-    throw new Error("Only deleted house can be requested for restore");
-  }
-
-  if (house.landlordId !== user.userId) {
-    throw new Error("You are not allowed to request restore for this house");
-  }
-
-  if (house.restoreRequested) {
-    throw new Error("Restore request already submitted");
-  }
+  if (!house) throw new Error("House not found");
+  if (!house.isDeleted) throw new Error("Only deleted house can be requested for restore");
+  if (house.landlordId !== user.userId) throw new Error("You are not allowed to request restore for this house");
+  if (house.restoreRequested) throw new Error("Restore request already submitted");
 
   return await prisma.house.update({
     where: { id: Number(id) },
@@ -158,10 +186,7 @@ const reviewRestoreRequest = async (id, action, note, user) => {
   });
 
   if (!house) throw new Error("House not found");
-
-  if (!house.restoreRequested) {
-    throw new Error("No restore request found");
-  }
+  if (!house.restoreRequested) throw new Error("No restore request found");
 
   if (action === "APPROVE") {
     return await prisma.house.update({
@@ -174,6 +199,9 @@ const reviewRestoreRequest = async (id, action, note, user) => {
         status: "PENDING",
         isPublished: false,
         restoreRequested: false,
+        restoreReviewedAt: new Date(),
+        restoreReviewNote: note,
+        restoreReviewedById: user.userId,
       },
     });
   }
@@ -183,6 +211,9 @@ const reviewRestoreRequest = async (id, action, note, user) => {
       where: { id: Number(id) },
       data: {
         restoreRequested: false,
+        restoreReviewedAt: new Date(),
+        restoreReviewNote: note,
+        restoreReviewedById: user.userId,
       },
     });
   }
@@ -217,6 +248,7 @@ const getHouseAdminSummary = async () => {
 export default {
   createHouse,
   approveHouse,
+  rejectHouse,
   getAllApprovedHouses,
   getSingleApprovedHouse,
   getMyHouses,

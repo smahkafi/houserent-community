@@ -7,11 +7,7 @@ import {
 const createBooking = async (req, res) => {
   try {
     const validatedData = createBookingSchema.parse(req.body);
-
-    const booking = await bookingService.createBooking(
-      req.user.userId,
-      validatedData
-    );
+    const booking = await bookingService.createBooking(req.user.userId, validatedData);
 
     return res.status(201).json({
       success: true,
@@ -72,12 +68,7 @@ const reviewBooking = async (req, res) => {
     }
 
     const validatedData = reviewBookingSchema.parse(req.body);
-
-    const booking = await bookingService.reviewBooking(
-      bookingId,
-      req.user.userId,
-      validatedData
-    );
+    const booking = await bookingService.reviewBooking(bookingId, req.user.userId, validatedData);
 
     return res.status(200).json({
       success: true,

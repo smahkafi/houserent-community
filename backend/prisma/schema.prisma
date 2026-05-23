@@ -19,10 +19,9 @@ model User {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
-  houses           House[]               @relation("LandlordHouses")
-  bookings         Booking[]             @relation("TenantBookings")
-  landlordBookings Booking[]             @relation("LandlordBookings")
-  applications     RentalApplication[]
+  houses           House[]             @relation("LandlordHouses")
+  bookings         Booking[]           @relation("TenantBookings")
+  landlordBookings Booking[]           @relation("LandlordBookings")
 }
 
 model House {
@@ -31,34 +30,60 @@ model House {
   description     String
   address         String
   area            String
-  rentAmount      Float
-  bedrooms        Int
-  bathrooms         Int
-attachedBathrooms Int?
-commonBathrooms   Int?
-  balconies       Int?
-  floorNo         Int?
   totalFloors     Int?
-  sizeInSqft      Float?
-  availableFrom   DateTime?
   status          HouseStatus @default(PENDING)
   rejectionReason String?
   isPublished     Boolean     @default(false)
+  isDeleted       Boolean     @default(false)
+  deletedAt       DateTime?
+  deleteReason    String?
+  deletedById     Int?
+  restoreRequested    Boolean   @default(false)
+  restoreRequestedAt  DateTime?
+  restoreReason       String?
+  restoreReviewedAt   DateTime?
+  restoreReviewNote   String?
+  restoreReviewedById Int?
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 
   landlordId      Int
   landlord        User        @relation("LandlordHouses", fields: [landlordId], references: [id])
 
-  bookings        Booking[]
-  applications    RentalApplication[]
+  rentalUnits     RentalUnit[]
+}
+
+model RentalUnit {
+  id                Int         @id @default(autoincrement())
+  title             String
+  description       String?
+  rentAmount        Float
+  bedrooms          Int
+  bathrooms         Int
+  attachedBathrooms Int?
+  commonBathrooms   Int?
+  balconies         Int?
+  floorNo           Int?
+  sizeInSqft        Float?
+  availableFrom     DateTime?
+  isAvailable       Boolean     @default(true)
+  status            UnitStatus  @default(PENDING)
+  rejectionReason   String?
+  isPublished       Boolean     @default(false)
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  houseId           Int
+  house             House       @relation(fields: [houseId], references: [id])
+
+  bookings          Booking[]
 }
 
 model Booking {
   id              Int           @id @default(autoincrement())
   tenantId        Int
   landlordId      Int
-  houseId         Int
+  rentalUnitId    Int
   message         String
   moveInDate      DateTime
   status          BookingStatus @default(PENDING)
@@ -67,22 +92,10 @@ model Booking {
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
 
-  tenant          User              @relation("TenantBookings", fields: [tenantId], references: [id])
-  landlord        User              @relation("LandlordBookings", fields: [landlordId], references: [id])
-  house           House             @relation(fields: [houseId], references: [id])
+  tenant          User            @relation("TenantBookings", fields: [tenantId], references: [id])
+  landlord        User            @relation("LandlordBookings", fields: [landlordId], references: [id])
+  rentalUnit      RentalUnit      @relation(fields: [rentalUnitId], references: [id])
   rentalAgreement RentalAgreement?
-}
-
-model RentalApplication {
-  id        Int               @id @default(autoincrement())
-  tenantId  Int
-  houseId   Int
-  status    ApplicationStatus @default(PENDING)
-  createdAt DateTime          @default(now())
-  updatedAt DateTime          @updatedAt
-
-  tenant    User              @relation(fields: [tenantId], references: [id])
-  house     House             @relation(fields: [houseId], references: [id])
 }
 
 model RentalAgreement {
@@ -116,13 +129,13 @@ enum HouseStatus {
   REJECTED
 }
 
-enum BookingStatus {
+enum UnitStatus {
   PENDING
   APPROVED
   REJECTED
 }
 
-enum ApplicationStatus {
+enum BookingStatus {
   PENDING
   APPROVED
   REJECTED

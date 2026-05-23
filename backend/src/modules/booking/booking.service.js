@@ -1,56 +1,61 @@
 import prisma from "../../config/prisma.js";
 
 const createBooking = async (tenantId, payload) => {
-  const house = await prisma.house.findFirst({
+  const rentalUnit = await prisma.rentalUnit.findFirst({
     where: {
-      id: payload.houseId,
+      id: payload.rentalUnitId,
       status: "APPROVED",
-      isPublished: true
+      isPublished: true,
+      isAvailable: true,
     },
     include: {
-      landlord: {
-        select: {
-          id: true,
-          fullName: true,
-          phone: true,
-          email: true,
-          role: true,
-          isActive: true,
-          isApproved: true,
+      house: {
+        include: {
+          landlord: {
+            select: {
+              id: true,
+              fullName: true,
+              phone: true,
+              email: true,
+              role: true,
+              isActive: true,
+              isApproved: true,
+            },
+          },
         },
       },
     },
   });
 
-  if (!house) {
-    throw new Error("House not found or not available for booking");
+  if (!rentalUnit) {
+    throw new Error("Rental unit not found or not available for booking");
   }
 
-  if (!house.landlord.isActive || !house.landlord.isApproved) {
+  if (!rentalUnit.house.landlord.isActive || !rentalUnit.house.landlord.isApproved) {
     throw new Error("Landlord is not active or approved");
   }
 
-  if (house.landlordId === tenantId) {
-    throw new Error("You cannot book your own house");
+  if (rentalUnit.house.landlordId === tenantId) {
+    throw new Error("You cannot book your own rental unit");
   }
 
   const existingPendingBooking = await prisma.booking.findFirst({
     where: {
       tenantId,
-      houseId: payload.houseId,
+      rentalUnitId: payload.rentalUnitId,
       status: "PENDING",
     },
   });
 
   if (existingPendingBooking) {
-    throw new Error("You already have a pending booking request for this house");
+    throw new Error("You already have a pending booking request for this unit");
   }
 
   const booking = await prisma.booking.create({
     data: {
       tenantId,
-      houseId: payload.houseId,
-      landlordId: house.landlordId,
+      rentalUnitId: payload.rentalUnitId,
+      landlordId: rentalUnit.house.landlordId,
       message: payload.message || null,
       moveInDate: payload.moveInDate ? new Date(payload.moveInDate) : null,
     },
@@ -71,15 +76,22 @@ const createBooking = async (tenantId, payload) => {
           email: true,
         },
       },
-      house: {
+      rentalUnit: {
         select: {
           id: true,
           title: true,
-          address: true,
-          area: true,
           rentAmount: true,
-          status: true,
-          isPublished: true,
+          bedrooms: true,
+          bathrooms: true,
+          floorNo: true,
+          house: {
+            select: {
+              id: true,
+              title: true,
+              address: true,
+              area: true,
+            },
+          },
         },
       },
     },
@@ -89,22 +101,25 @@ const createBooking = async (tenantId, payload) => {
 };
 
 const getMyBookings = async (tenantId) => {
-  const bookings = await prisma.booking.findMany({
-    where: {
-      tenantId,
-    },
+  return await prisma.booking.findMany({
+    where: { tenantId },
     include: {
-      house: {
+      rentalUnit: {
         select: {
           id: true,
           title: true,
-          address: true,
-          area: true,
           rentAmount: true,
           bedrooms: true,
           bathrooms: true,
-          status: true,
-          isPublished: true
+          floorNo: true,
+          house: {
+            select: {
+              id: true,
+              title: true,
+              address: true,
+              area: true,
+            },
+          },
         },
       },
       landlord: {
@@ -116,19 +131,13 @@ const getMyBookings = async (tenantId) => {
         },
       },
     },
-    orderBy: {
-      createdAt: "desc",
-    },
+    orderBy: { createdAt: "desc" },
   });
-
-  return bookings;
 };
 
 const getLandlordBookings = async (landlordId) => {
-  const bookings = await prisma.booking.findMany({
-    where: {
-      landlordId,
-    },
+  return await prisma.booking.findMany({
+    where: { landlordId },
     include: {
       tenant: {
         select: {
@@ -140,59 +149,47 @@ const getLandlordBookings = async (landlordId) => {
           isApproved: true,
         },
       },
-      house: {
+      rentalUnit: {
         select: {
           id: true,
           title: true,
-          address: true,
-          area: true,
           rentAmount: true,
-          status: true,
-          isPublished: true
+          bedrooms: true,
+          bathrooms: true,
+          floorNo: true,
+          house: {
+            select: {
+              id: true,
+              title: true,
+              address: true,
+              area: true,
+            },
+          },
         },
       },
     },
-    orderBy: {
-      createdAt: "desc",
-    },
+    orderBy: { createdAt: "desc" },
   });
-
-  return bookings;
 };
 
 const reviewBooking = async (bookingId, landlordId, payload) => {
   const booking = await prisma.booking.findFirst({
-    where: {
-      id: bookingId,
-      landlordId,
-    },
-    include: {
-      house: true,
-    },
+    where: { id: bookingId, landlordId },
+    include: { rentalUnit: true },
   });
 
-  if (!booking) {
-    throw new Error("Booking not found");
-  }
-
-  if (booking.status !== "PENDING") {
-    throw new Error("Only pending bookings can be reviewed");
-  }
+  if (!booking) throw new Error("Booking not found");
+  if (booking.status !== "PENDING") throw new Error("Only pending bookings can be reviewed");
 
   if (payload.status === "REJECTED" && !payload.rejectionReason?.trim()) {
     throw new Error("Rejection reason is required when rejecting a booking");
   }
 
-  const updatedBooking = await prisma.booking.update({
-    where: {
-      id: bookingId,
-    },
+  return await prisma.booking.update({
+    where: { id: bookingId },
     data: {
       status: payload.status,
-      rejectionReason:
-        payload.status === "REJECTED"
-          ? payload.rejectionReason?.trim() || null
-          : null,
+      rejectionReason: payload.status === "REJECTED" ? payload.rejectionReason?.trim() || null : null,
       landlordNote: payload.landlordNote?.trim() || null,
     },
     include: {
@@ -212,19 +209,23 @@ const reviewBooking = async (bookingId, landlordId, payload) => {
           email: true,
         },
       },
-      house: {
+      rentalUnit: {
         select: {
           id: true,
           title: true,
-          address: true,
-          area: true,
           rentAmount: true,
+          house: {
+            select: {
+              id: true,
+              title: true,
+              address: true,
+              area: true,
+            },
+          },
         },
       },
     },
   });
-
-  return updatedBooking;
 };
 
 export default {

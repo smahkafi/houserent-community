@@ -1,13 +1,13 @@
 import { z } from "zod";
 
 export const createBookingSchema = z.object({
-  houseId: z
+  rentalUnitId: z
     .number({
-      required_error: "House id is required",
-      invalid_type_error: "House id must be a number",
+      required_error: "Rental unit id is required",
+      invalid_type_error: "Rental unit id must be a number",
     })
-    .int("House id must be an integer")
-    .positive("House id must be a positive number"),
+    .int("Rental unit id must be an integer")
+    .positive("Rental unit id must be a positive number"),
 
   message: z
     .string()

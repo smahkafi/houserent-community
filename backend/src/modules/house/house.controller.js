@@ -1,6 +1,7 @@
 import houseService from "./house.service.js";
 import {
   createHouseSchema,
+  rejectHouseSchema,
   softDeleteHouseSchema,
   restoreRequestSchema,
   reviewRestoreSchema,
@@ -30,11 +31,29 @@ const createHouse = async (req, res) => {
 
 const approveHouse = async (req, res) => {
   try {
-    const result = await houseService.approveHouse(req.params.id, req.user);
+    const result = await houseService.approveHouse(req.params.id);
 
     return res.status(200).json({
       success: true,
       message: "House approved successfully",
+      data: result,
+    });
+  } catch (e) {
+    return res.status(400).json({
+      success: false,
+      message: e.message,
+    });
+  }
+};
+
+const rejectHouse = async (req, res) => {
+  try {
+    const data = rejectHouseSchema.parse(req.body);
+    const result = await houseService.rejectHouse(req.params.id, data.rejectionReason);
+
+    return res.status(200).json({
+      success: true,
+      message: "House rejected successfully",
       data: result,
     });
   } catch (e) {
@@ -249,6 +268,7 @@ const getHouseAdminSummary = async (req, res) => {
 export default {
   createHouse,
   approveHouse,
+  rejectHouse,
   getAllApprovedHouses,
   getSingleApprovedHouse,
   getMyHouses,
