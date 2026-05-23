@@ -109,29 +109,41 @@ function MyHousesPage() {
                   {house.description}
                 </p>
                 <div className="space-y-1 text-sm text-slate-300">
-                  <p>📍 {house.address}</p>
-                  <p>💰 BDT {house.rentAmount.toLocaleString()} / month</p>
-                  <p>🛏 {house.bedrooms} bedroom(s)</p>
-                  <p>
-                    🚿 {house.bathrooms} bathroom(s)
-                    {house.attachedBathrooms ? ` (${house.attachedBathrooms} attached` : ""}
-                    {house.commonBathrooms ? `, ${house.commonBathrooms} common)` : house.attachedBathrooms ? ")" : ""}
-                  </p>
-                  {house.balconies > 0 && (
-                    <p>🏡 {house.balconies} balcon(ies)</p>
+                  <p>📍 {house.address}, {house.area}</p>
+                  {house.totalFloors && (
+                    <p>🏢 Total {house.totalFloors} floors</p>
                   )}
-                  {house.floorNo && house.totalFloors && (
-                    <p>🏢 Floor {house.floorNo} of {house.totalFloors}</p>
-                  )}
-                  {house.floorNo && !house.totalFloors && (
-                    <p>🏢 Floor {house.floorNo}</p>
-                  )}
-                  {house.sizeInSqft && (
-                    <p>📐 {house.sizeInSqft} sqft</p>
-                  )}
+                  <p>🏘 {house.rentalUnits?.length || 0} rental unit(s)</p>
                 </div>
                 {house.rejectionReason && (
                   <div className="mt-4 rounded-2xl border border-red-400/20 bg-red-500/10 p-3 text-xs text-red-200">
                     Rejected: {house.rejectionReason}
                   </div>
                 )}
+                <div className="mt-4 flex gap-2">
+                  <Link
+                    to={`/landlord/houses/${house.id}`}
+                    className="flex-1 rounded-2xl border border-white/10 px-4 py-2 text-center text-sm font-medium text-slate-200 transition hover:border-emerald-300/50 hover:text-emerald-300"
+                  >
+                    View Details
+                  </Link>
+                  {house.status === "APPROVED" && (
+                    <Link
+                      to={`/landlord/houses/${house.id}/add-unit`}
+                      className="flex-1 rounded-2xl bg-emerald-400/10 border border-emerald-300/20 px-4 py-2 text-center text-sm font-medium text-emerald-300 transition hover:bg-emerald-400/20"
+                    >
+                      + Add Unit
+                    </Link>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+      </div>
+    </div>
+  );
+}
+
+export default MyHousesPage;

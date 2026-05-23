@@ -13,16 +13,7 @@ function AddHousePage() {
     description: "",
     address: "",
     area: "",
-    rentAmount: "",
-    bedrooms: "",
-    bathrooms: "",
-    attachedBathrooms: "",
-    commonBathrooms: "",
-    balconies: "",
-    floorNo: "",
     totalFloors: "",
-    sizeInSqft: "",
-    availableFrom: "",
   });
 
   const handleChange = (e) => {
@@ -40,16 +31,7 @@ function AddHousePage() {
         `${API_BASE_URL}/houses`,
         {
           ...formData,
-          rentAmount: parseFloat(formData.rentAmount),
-          bedrooms: parseInt(formData.bedrooms),
-          bathrooms: parseInt(formData.bathrooms),
-          attachedBathrooms: formData.attachedBathrooms ? parseInt(formData.attachedBathrooms) : undefined,
-          commonBathrooms: formData.commonBathrooms ? parseInt(formData.commonBathrooms) : undefined,
-          balconies: formData.balconies ? parseInt(formData.balconies) : undefined,
-          floorNo: formData.floorNo ? parseInt(formData.floorNo) : undefined,
           totalFloors: formData.totalFloors ? parseInt(formData.totalFloors) : undefined,
-          sizeInSqft: formData.sizeInSqft ? parseFloat(formData.sizeInSqft) : undefined,
-          availableFrom: formData.availableFrom ? new Date(formData.availableFrom).toISOString() : undefined,
         },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -73,17 +55,17 @@ function AddHousePage() {
 
         <div className="mb-8">
           <button
-            onClick={() => navigate("/landlord/dashboard")}
+            onClick={() => navigate("/landlord/houses")}
             className="mb-4 text-sm text-slate-400 transition hover:text-emerald-300"
           >
-            ← Back to Dashboard
+            ← Back to My Houses
           </button>
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-emerald-300">
             Landlord Panel
           </p>
           <h1 className="mt-1 text-3xl font-bold">Add New House</h1>
           <p className="mt-1 text-sm text-slate-400">
-            Fill in the details to list your property.
+            Add your property details. You can add rental units after the house is approved.
           </p>
         </div>
 
@@ -98,14 +80,14 @@ function AddHousePage() {
 
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-200">
-                Title <span className="text-red-400">*</span>
+                House Title <span className="text-red-400">*</span>
               </label>
               <input
                 type="text"
                 name="title"
                 value={formData.title}
                 onChange={handleChange}
-                placeholder="e.g. 2 Bedroom Flat in Dhanmondi"
+                placeholder="e.g. Mirpur 10 Building"
                 className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-emerald-300"
                 required
               />
@@ -135,132 +117,25 @@ function AddHousePage() {
                 name="address"
                 value={formData.address}
                 onChange={handleChange}
-                placeholder="Full address"
+                placeholder="e.g. Road 5, Block B, Mirpur 10"
                 className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-emerald-300"
                 required
               />
             </div>
 
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-200">
-                Area <span className="text-red-400">*</span>
-              </label>
-              <input
-                type="text"
-                name="area"
-                value={formData.area}
-                onChange={handleChange}
-                placeholder="e.g. Dhanmondi, Dhaka"
-                className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-emerald-300"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-200">
-                Rent Amount (BDT) <span className="text-red-400">*</span>
-              </label>
-              <input
-                type="number"
-                name="rentAmount"
-                value={formData.rentAmount}
-                onChange={handleChange}
-                placeholder="e.g. 15000"
-                className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-emerald-300"
-                required
-              />
-            </div>
-
-            {/* Bedrooms */}
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-200">
-                Bedrooms <span className="text-red-400">*</span>
-              </label>
-              <input
-                type="number"
-                name="bedrooms"
-                value={formData.bedrooms}
-                onChange={handleChange}
-                placeholder="e.g. 2"
-                className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-emerald-300"
-                required
-              />
-            </div>
-
-            {/* Bathrooms */}
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-200">
-                Total Bathrooms <span className="text-red-400">*</span>
-              </label>
-              <input
-                type="number"
-                name="bathrooms"
-                value={formData.bathrooms}
-                onChange={handleChange}
-                placeholder="e.g. 2"
-                className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-emerald-300"
-                required
-              />
-            </div>
-
-            {/* Attached & Common Bathrooms */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-200">
-                  Attached Bathrooms
+                  Area <span className="text-red-400">*</span>
                 </label>
                 <input
-                  type="number"
-                  name="attachedBathrooms"
-                  value={formData.attachedBathrooms}
+                  type="text"
+                  name="area"
+                  value={formData.area}
                   onChange={handleChange}
-                  placeholder="e.g. 1"
+                  placeholder="e.g. Mirpur, Dhaka"
                   className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-emerald-300"
-                />
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-slate-200">
-                  Common Bathrooms
-                </label>
-                <input
-                  type="number"
-                  name="commonBathrooms"
-                  value={formData.commonBathrooms}
-                  onChange={handleChange}
-                  placeholder="e.g. 1"
-                  className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-emerald-300"
-                />
-              </div>
-            </div>
-
-            {/* Balconies */}
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-200">
-                Balconies
-              </label>
-              <input
-                type="number"
-                name="balconies"
-                value={formData.balconies}
-                onChange={handleChange}
-                placeholder="e.g. 1"
-                className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-emerald-300"
-              />
-            </div>
-
-            {/* Floor No, Total Floors, Size */}
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <label className="mb-2 block text-sm font-medium text-slate-200">
-                  Floor No
-                </label>
-                <input
-                  type="number"
-                  name="floorNo"
-                  value={formData.floorNo}
-                  onChange={handleChange}
-                  placeholder="e.g. 3"
-                  className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-emerald-300"
+                  required
                 />
               </div>
               <div>
@@ -276,32 +151,6 @@ function AddHousePage() {
                   className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-emerald-300"
                 />
               </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-slate-200">
-                  Size (sqft)
-                </label>
-                <input
-                  type="number"
-                  name="sizeInSqft"
-                  value={formData.sizeInSqft}
-                  onChange={handleChange}
-                  placeholder="e.g. 1200"
-                  className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-emerald-300"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-200">
-                Available From
-              </label>
-              <input
-                type="date"
-                name="availableFrom"
-                value={formData.availableFrom}
-                onChange={handleChange}
-                className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
-              />
             </div>
 
             <button

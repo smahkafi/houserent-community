@@ -7,6 +7,8 @@ import TenantDashboardPage from "./pages/tenant/TenantDashboardPage.jsx";
 import LandlordDashboardPage from "./pages/landlord/LandlordDashboardPage.jsx";
 import AddHousePage from "./pages/landlord/AddHousePage.jsx";
 import MyHousesPage from "./pages/landlord/MyHousesPage.jsx";
+import HouseDetailPage from "./pages/landlord/HouseDetailPage.jsx";
+import AddRentalUnitPage from "./pages/landlord/AddRentalUnitPage.jsx";
 import { getToken, getUser } from "./utils/auth";
 
 function ProtectedRoute({ children, allowedRoles }) {
@@ -53,6 +55,14 @@ function App() {
             }
           />
           <Route
+            path="/landlord/houses"
+            element={
+              <ProtectedRoute allowedRoles={["LANDLORD"]}>
+                <MyHousesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/landlord/houses/add"
             element={
               <ProtectedRoute allowedRoles={["LANDLORD"]}>
@@ -61,10 +71,18 @@ function App() {
             }
           />
           <Route
-            path="/landlord/houses"
+            path="/landlord/houses/:houseId"
             element={
               <ProtectedRoute allowedRoles={["LANDLORD"]}>
-                <MyHousesPage />
+                <HouseDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/landlord/houses/:houseId/add-unit"
+            element={
+              <ProtectedRoute allowedRoles={["LANDLORD"]}>
+                <AddRentalUnitPage />
               </ProtectedRoute>
             }
           />
