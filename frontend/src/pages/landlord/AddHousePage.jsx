@@ -18,6 +18,7 @@ function AddHousePage() {
     bathrooms: "",
     balconies: "",
     floorNo: "",
+    totalFloors: "",
     sizeInSqft: "",
     availableFrom: "",
   });
@@ -42,6 +43,7 @@ function AddHousePage() {
           bathrooms: parseInt(formData.bathrooms),
           balconies: formData.balconies ? parseInt(formData.balconies) : undefined,
           floorNo: formData.floorNo ? parseInt(formData.floorNo) : undefined,
+          totalFloors: formData.totalFloors ? parseInt(formData.totalFloors) : undefined,
           sizeInSqft: formData.sizeInSqft ? parseFloat(formData.sizeInSqft) : undefined,
           availableFrom: formData.availableFrom ? new Date(formData.availableFrom).toISOString() : undefined,
         },
@@ -92,7 +94,6 @@ function AddHousePage() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
 
-            {/* Title */}
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-200">
                 Title <span className="text-red-400">*</span>
@@ -108,7 +109,6 @@ function AddHousePage() {
               />
             </div>
 
-            {/* Description */}
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-200">
                 Description <span className="text-red-400">*</span>
@@ -124,7 +124,6 @@ function AddHousePage() {
               />
             </div>
 
-            {/* Address */}
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-200">
                 Address <span className="text-red-400">*</span>
@@ -140,7 +139,6 @@ function AddHousePage() {
               />
             </div>
 
-            {/* Area */}
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-200">
                 Area <span className="text-red-400">*</span>
@@ -156,7 +154,6 @@ function AddHousePage() {
               />
             </div>
 
-            {/* Rent Amount */}
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-200">
                 Rent Amount (BDT) <span className="text-red-400">*</span>
@@ -172,7 +169,6 @@ function AddHousePage() {
               />
             </div>
 
-            {/* Bedrooms & Bathrooms */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-200">
@@ -204,7 +200,6 @@ function AddHousePage() {
               </div>
             </div>
 
-            {/* Balconies & Floor No */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-200">
@@ -221,6 +216,22 @@ function AddHousePage() {
               </div>
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-200">
+                  Balconies
+                </label>
+                <input
+                  type="number"
+                  name="balconies"
+                  value={formData.balconies}
+                  onChange={handleChange}
+                  placeholder="e.g. 1"
+                  className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-emerald-300"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <label className="mb-2 block text-sm font-medium text-slate-200">
                   Floor No
                 </label>
                 <input
@@ -232,10 +243,19 @@ function AddHousePage() {
                   className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-emerald-300"
                 />
               </div>
-            </div>
-
-            {/* Size & Available From */}
-            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="mb-2 block text-sm font-medium text-slate-200">
+                  Total Floors
+                </label>
+                <input
+                  type="number"
+                  name="totalFloors"
+                  value={formData.totalFloors}
+                  onChange={handleChange}
+                  placeholder="e.g. 6"
+                  className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-emerald-300"
+                />
+              </div>
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-200">
                   Size (sqft)
@@ -249,21 +269,21 @@ function AddHousePage() {
                   className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-emerald-300"
                 />
               </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-slate-200">
-                  Available From
-                </label>
-                <input
-                  type="date"
-                  name="availableFrom"
-                  value={formData.availableFrom}
-                  onChange={handleChange}
-                  className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
-                />
-              </div>
             </div>
 
-            {/* Submit */}
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-200">
+                Available From
+              </label>
+              <input
+                type="date"
+                name="availableFrom"
+                value={formData.availableFrom}
+                onChange={handleChange}
+                className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
+              />
+            </div>
+
             <button
               type="submit"
               disabled={loading}
