@@ -4,6 +4,7 @@ import HomePage from "./pages/HomePage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import RentalAgreementsPage from "./pages/RentalAgreementsPage.jsx";
 import TenantDashboardPage from "./pages/tenant/TenantDashboardPage.jsx";
+import LandlordDashboardPage from "./pages/landlord/LandlordDashboardPage.jsx";
 import { getToken, getUser } from "./utils/auth";
 
 function ProtectedRoute({ children, allowedRoles }) {
@@ -45,7 +46,7 @@ function App() {
             path="/landlord/dashboard"
             element={
               <ProtectedRoute allowedRoles={["LANDLORD"]}>
-                <div className="p-10 text-white">Landlord Dashboard — Coming Soon</div>
+                <LandlordDashboardPage />
               </ProtectedRoute>
             }
           />
