@@ -6,6 +6,7 @@ import RentalAgreementsPage from "./pages/RentalAgreementsPage.jsx";
 import TenantDashboardPage from "./pages/tenant/TenantDashboardPage.jsx";
 import BrowseHousesPage from "./pages/tenant/BrowseHousesPage.jsx";
 import BookingPage from "./pages/tenant/BookingPage.jsx";
+import MyBookingsPage from "./pages/tenant/MyBookingsPage.jsx";
 import LandlordDashboardPage from "./pages/landlord/LandlordDashboardPage.jsx";
 import AddHousePage from "./pages/landlord/AddHousePage.jsx";
 import MyHousesPage from "./pages/landlord/MyHousesPage.jsx";
@@ -37,6 +38,7 @@ function App() {
           <Route path="/tenant/dashboard" element={<ProtectedRoute allowedRoles={["TENANT"]}><TenantDashboardPage /></ProtectedRoute>} />
           <Route path="/houses" element={<ProtectedRoute allowedRoles={["TENANT"]}><BrowseHousesPage /></ProtectedRoute>} />
           <Route path="/tenant/booking/:unitId" element={<ProtectedRoute allowedRoles={["TENANT"]}><BookingPage /></ProtectedRoute>} />
+          <Route path="/tenant/bookings" element={<ProtectedRoute allowedRoles={["TENANT"]}><MyBookingsPage /></ProtectedRoute>} />
 
           {/* Landlord */}
           <Route path="/landlord/dashboard" element={<ProtectedRoute allowedRoles={["LANDLORD"]}><LandlordDashboardPage /></ProtectedRoute>} />
