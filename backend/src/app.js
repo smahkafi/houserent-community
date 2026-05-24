@@ -9,6 +9,7 @@ import rentalUnitRoutes from "./modules/rentalUnit/rentalUnit.route.js";
 import rentalApplicationRoutes from "./modules/rentalApplication/rentalApplication.route.js";
 import rentalAgreementRoutes from "./modules/rentalAgreement/rentalAgreement.route.js";
 import settingsRoutes from "./modules/admin/settings.route.js";
+import communityReportRoutes from "./modules/communityReport/communityReport.route.js";
 
 const app = express();
 
@@ -28,5 +29,6 @@ app.use("/api/houses", houseRoutes);
 app.use("/api/rental-units", rentalUnitRoutes);
 app.use("/api/rental-applications", rentalApplicationRoutes);
 app.use("/api/rental-agreements", rentalAgreementRoutes);
+app.use("/api/community-reports", communityReportRoutes);
 
 export default app;

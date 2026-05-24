@@ -22,6 +22,8 @@ model User {
   houses           House[]             @relation("LandlordHouses")
   bookings         Booking[]           @relation("TenantBookings")
   landlordBookings Booking[]           @relation("LandlordBookings")
+
+  reports      CommunityReport[] @relation("ResidentReports")
 }
 
 model House {
@@ -138,5 +140,37 @@ enum UnitStatus {
 enum BookingStatus {
   PENDING
   APPROVED
+  REJECTED
+}
+
+model CommunityReport {
+  id          Int              @id @default(autoincrement())
+  title       String
+  description String
+  category    ReportCategory
+  location    String
+  status      ReportStatus     @default(PENDING)
+  adminNote   String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  reportedById Int
+  reportedBy   User            @relation("ResidentReports", fields: [reportedById], references: [id])
+}
+
+enum ReportCategory {
+  ROAD
+  ELECTRICITY
+  WATER
+  GAS
+  SECURITY
+  SANITATION
+  OTHER
+}
+
+enum ReportStatus {
+  PENDING
+  IN_PROGRESS
+  RESOLVED
   REJECTED
 }
