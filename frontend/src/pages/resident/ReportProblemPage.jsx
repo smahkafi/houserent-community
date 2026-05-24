@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getToken } from "../../utils/auth";
 import axios from "axios";
@@ -21,12 +21,26 @@ function ReportProblemPage() {
   const [success, setSuccess] = useState(false);
   const [images, setImages] = useState([]);
   const [previews, setPreviews] = useState([]);
+  const [houses, setHouses] = useState([]);
+  const [selectedHouses, setSelectedHouses] = useState([]);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     category: "",
     location: "",
   });
+
+  useEffect(() => {
+    const fetchHouses = async () => {
+      try {
+        const res = await axios.get(`${API_BASE_URL}/houses`);
+        setHouses(res.data.data);
+      } catch (err) {
+        console.error("Failed to load houses");
+      }
+    };
+    fetchHouses();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -46,10 +60,16 @@ function ReportProblemPage() {
   };
 
   const removeImage = (index) => {
-    const newImages = images.filter((_, i) => i !== index);
-    const newPreviews = previews.filter((_, i) => i !== index);
-    setImages(newImages);
-    setPreviews(newPreviews);
+    setImages(images.filter((_, i) => i !== index));
+    setPreviews(previews.filter((_, i) => i !== index));
+  };
+
+  const toggleHouse = (houseId) => {
+    setSelectedHouses((prev) =>
+      prev.includes(houseId)
+        ? prev.filter((id) => id !== houseId)
+        : [...prev, houseId]
+    );
   };
 
   const handleSubmit = async (e) => {
@@ -63,6 +83,7 @@ function ReportProblemPage() {
       form.append("description", formData.description);
       form.append("category", formData.category);
       form.append("location", formData.location);
+      form.append("affectedHouseIds", JSON.stringify(selectedHouses));
       images.forEach((img) => form.append("images", img));
 
       await axios.post(`${API_BASE_URL}/community-reports`, form, {
@@ -87,7 +108,7 @@ function ReportProblemPage() {
         <p className="mt-2 text-sm text-slate-300">Your report has been submitted. Admin will review it shortly.</p>
         <div className="mt-6 flex gap-3">
           <button onClick={() => navigate("/resident/my-reports")} className="flex-1 rounded-2xl bg-emerald-400 px-4 py-2 text-sm font-bold text-slate-950 transition hover:bg-emerald-300">My Reports</button>
-          <button onClick={() => { setSuccess(false); setFormData({ title: "", description: "", category: "", location: "" }); setImages([]); setPreviews([]); }} className="flex-1 rounded-2xl border border-white/10 px-4 py-2 text-sm font-medium text-slate-200 transition hover:border-emerald-300/50">New Report</button>
+          <button onClick={() => { setSuccess(false); setFormData({ title: "", description: "", category: "", location: "" }); setImages([]); setPreviews([]); setSelectedHouses([]); }} className="flex-1 rounded-2xl border border-white/10 px-4 py-2 text-sm font-medium text-slate-200 transition hover:border-emerald-300/50">New Report</button>
         </div>
       </div>
     </div>
@@ -176,6 +197,44 @@ function ReportProblemPage() {
               />
             </div>
 
+            {/* Affected Houses */}
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-200">
+                Affected Houses (optional)
+              </label>
+              <p className="mb-3 text-xs text-slate-400">Select the houses near this problem area.</p>
+              {houses.length === 0 ? (
+                <p className="text-sm text-slate-500">No approved houses available.</p>
+              ) : (
+                <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                  {houses.map((house) => (
+                    <label
+                      key={house.id}
+                      className={`flex cursor-pointer items-center gap-3 rounded-2xl border px-4 py-3 transition ${
+                        selectedHouses.includes(house.id)
+                          ? "border-emerald-300/50 bg-emerald-400/10"
+                          : "border-white/10 bg-white/5 hover:border-white/20"
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedHouses.includes(house.id)}
+                        onChange={() => toggleHouse(house.id)}
+                        className="h-4 w-4 accent-emerald-400"
+                      />
+                      <div>
+                        <p className="text-sm font-medium text-white">{house.title}</p>
+                        <p className="text-xs text-slate-400">📍 {house.address}, {house.area}</p>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              )}
+              {selectedHouses.length > 0 && (
+                <p className="mt-2 text-xs text-emerald-300">{selectedHouses.length} house(s) selected</p>
+              )}
+            </div>
+
             {/* Image Upload */}
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-200">
@@ -193,23 +252,12 @@ function ReportProblemPage() {
                   className="hidden"
                 />
               </label>
-
               {previews.length > 0 && (
                 <div className="mt-3 grid grid-cols-3 gap-2">
                   {previews.map((url, index) => (
                     <div key={index} className="relative">
-                      <img
-                        src={url}
-                        alt={`preview-${index}`}
-                        className="h-24 w-full rounded-2xl object-cover"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeImage(index)}
-                        className="absolute right-1 top-1 rounded-full bg-red-500 px-2 py-0.5 text-xs text-white"
-                      >
-                        ✕
-                      </button>
+                      <img src={url} alt={`preview-${index}`} className="h-24 w-full rounded-2xl object-cover" />
+                      <button type="button" onClick={() => removeImage(index)} className="absolute right-1 top-1 rounded-full bg-red-500 px-2 py-0.5 text-xs text-white">✕</button>
                     </div>
                   ))}
                 </div>
