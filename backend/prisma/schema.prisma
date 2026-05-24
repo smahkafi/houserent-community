@@ -149,6 +149,7 @@ model CommunityReport {
   description String
   category    ReportCategory
   location    String
+  imageUrls   Json?
   status      ReportStatus     @default(PENDING)
   adminNote   String?
   createdAt   DateTime         @default(now())

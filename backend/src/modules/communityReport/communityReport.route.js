@@ -2,6 +2,7 @@ import express from "express";
 import communityReportController from "./communityReport.controller.js";
 import auth from "../../middlewares/auth.middleware.js";
 import role from "../../middlewares/role.middleware.js";
+import upload from "../../middlewares/uploadMiddleware.js";
 
 const router = express.Router();
 
@@ -9,6 +10,7 @@ router.post(
   "/",
   auth,
   role("RESIDENT"),
+  upload.array("images", 5),
   communityReportController.createReport
 );
 

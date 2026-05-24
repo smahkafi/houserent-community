@@ -1,10 +1,11 @@
 import prisma from "../../config/prisma.js";
 
-const createReport = async (userId, payload) => {
+const createReport = async (userId, payload, imageUrls = []) => {
   return await prisma.communityReport.create({
     data: {
       ...payload,
       reportedById: userId,
+      imageUrls: imageUrls.length > 0 ? imageUrls : [],
     },
   });
 };
