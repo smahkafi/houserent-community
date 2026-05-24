@@ -16,7 +16,7 @@ function HouseDetailPage() {
     const fetchData = async () => {
       try {
         const token = getToken();
-        const [houseRes, unitsRes] = await Promise.all([
+        const [housesRes, unitsRes] = await Promise.all([
           axios.get(`${API_BASE_URL}/houses/my-houses`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
@@ -24,7 +24,10 @@ function HouseDetailPage() {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
-        const found = houseRes.data.data.find((h) => h.id === parseInt(houseId));
+
+        const found = housesRes.data.data.find(
+          (h) => h.id === parseInt(houseId)
+        );
         if (!found) throw new Error("House not found");
         setHouse(found);
         setUnits(unitsRes.data.data);
@@ -70,7 +73,6 @@ function HouseDetailPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950 px-4 py-10 text-white">
       <div className="mx-auto max-w-5xl">
 
-        {/* Header */}
         <div className="mb-8">
           <button
             onClick={() => navigate("/landlord/houses")}
@@ -84,7 +86,6 @@ function HouseDetailPage() {
           <h1 className="mt-1 text-3xl font-bold">{house.title}</h1>
         </div>
 
-        {/* House Info */}
         <div className="mb-8 rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-md">
           <div className="mb-4 flex items-start justify-between gap-2">
             <h2 className="text-lg font-semibold text-white">House Details</h2>
@@ -109,7 +110,6 @@ function HouseDetailPage() {
           )}
         </div>
 
-        {/* Rental Units */}
         <div>
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-lg font-semibold text-slate-200">
