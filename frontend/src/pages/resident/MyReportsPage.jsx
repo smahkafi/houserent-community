@@ -84,6 +84,22 @@ function MyReportsPage() {
                   </span>
                 </div>
                 <p className="mb-3 text-sm text-slate-300">{report.description}</p>
+
+                {/* Images */}
+                {report.imageUrls && report.imageUrls.length > 0 && (
+                  <div className="mb-3 grid grid-cols-3 gap-2">
+                    {report.imageUrls.map((url, index) => (
+                      <a key={index} href={url} target="_blank" rel="noreferrer">
+                        <img
+                          src={url}
+                          alt={`report-${index}`}
+                          className="h-24 w-full rounded-2xl object-cover transition hover:opacity-80"
+                        />
+                      </a>
+                    ))}
+                  </div>
+                )}
+
                 {report.adminNote && (
                   <div className="rounded-2xl border border-emerald-400/20 bg-emerald-500/10 p-3 text-sm text-emerald-200">
                     📝 Admin note: {report.adminNote}

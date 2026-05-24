@@ -19,6 +19,8 @@ function ReportProblemPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [images, setImages] = useState([]);
+  const [previews, setPreviews] = useState([]);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -31,14 +33,43 @@ function ReportProblemPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length > 5) {
+      setError("Maximum 5 images allowed");
+      return;
+    }
+    setImages(files);
+    const urls = files.map((f) => URL.createObjectURL(f));
+    setPreviews(urls);
+    setError("");
+  };
+
+  const removeImage = (index) => {
+    const newImages = images.filter((_, i) => i !== index);
+    const newPreviews = previews.filter((_, i) => i !== index);
+    setImages(newImages);
+    setPreviews(newPreviews);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
     try {
       const token = getToken();
-      await axios.post(`${API_BASE_URL}/community-reports`, formData, {
-        headers: { Authorization: `Bearer ${token}` },
+      const form = new FormData();
+      form.append("title", formData.title);
+      form.append("description", formData.description);
+      form.append("category", formData.category);
+      form.append("location", formData.location);
+      images.forEach((img) => form.append("images", img));
+
+      await axios.post(`${API_BASE_URL}/community-reports`, form, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
       });
       setSuccess(true);
     } catch (err) {
@@ -56,7 +87,7 @@ function ReportProblemPage() {
         <p className="mt-2 text-sm text-slate-300">Your report has been submitted. Admin will review it shortly.</p>
         <div className="mt-6 flex gap-3">
           <button onClick={() => navigate("/resident/my-reports")} className="flex-1 rounded-2xl bg-emerald-400 px-4 py-2 text-sm font-bold text-slate-950 transition hover:bg-emerald-300">My Reports</button>
-          <button onClick={() => { setSuccess(false); setFormData({ title: "", description: "", category: "", location: "" }); }} className="flex-1 rounded-2xl border border-white/10 px-4 py-2 text-sm font-medium text-slate-200 transition hover:border-emerald-300/50">New Report</button>
+          <button onClick={() => { setSuccess(false); setFormData({ title: "", description: "", category: "", location: "" }); setImages([]); setPreviews([]); }} className="flex-1 rounded-2xl border border-white/10 px-4 py-2 text-sm font-medium text-slate-200 transition hover:border-emerald-300/50">New Report</button>
         </div>
       </div>
     </div>
@@ -143,6 +174,46 @@ function ReportProblemPage() {
                 className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-emerald-300"
                 required
               />
+            </div>
+
+            {/* Image Upload */}
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-200">
+                Images (max 5)
+              </label>
+              <label className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-white/20 bg-white/5 px-4 py-6 transition hover:border-emerald-300/50 hover:bg-emerald-400/5">
+                <p className="text-2xl">📷</p>
+                <p className="mt-2 text-sm text-slate-300">Click to upload images</p>
+                <p className="text-xs text-slate-500">JPG, PNG, WEBP — max 5MB each</p>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </label>
+
+              {previews.length > 0 && (
+                <div className="mt-3 grid grid-cols-3 gap-2">
+                  {previews.map((url, index) => (
+                    <div key={index} className="relative">
+                      <img
+                        src={url}
+                        alt={`preview-${index}`}
+                        className="h-24 w-full rounded-2xl object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeImage(index)}
+                        className="absolute right-1 top-1 rounded-full bg-red-500 px-2 py-0.5 text-xs text-white"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <button
