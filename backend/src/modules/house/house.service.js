@@ -106,6 +106,13 @@ const getMyHouses = async (user) => {
     where: user.role === "LANDLORD" ? { landlordId: user.userId, isDeleted: false } : { isDeleted: false },
     include: {
       rentalUnits: true,
+      landlord: {
+        select: {
+          id: true,
+          fullName: true,
+          phone: true,
+        },
+      },
     },
     orderBy: { createdAt: "desc" },
   });
@@ -228,6 +235,10 @@ const permanentDeleteHouse = async (id) => {
 };
 
 const getHouseAdminSummary = async () => {
+  const pendingHousesCount = await prisma.house.count({
+    where: { status: "PENDING", isDeleted: false },
+  });
+
   const deletedHousesCount = await prisma.house.count({
     where: { isDeleted: true },
   });
@@ -240,6 +251,7 @@ const getHouseAdminSummary = async () => {
   });
 
   return {
+    pendingHousesCount,
     deletedHousesCount,
     restoreRequestsCount,
   };
