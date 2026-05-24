@@ -41,6 +41,7 @@ router.get(
 );
 
 router.get("/", houseController.getAllApprovedHouses);
+
 router.get("/:id", houseController.getSingleApprovedHouse);
 
 router.patch(
@@ -48,6 +49,13 @@ router.patch(
   auth,
   role("ADMIN", "SUPER_ADMIN"),
   houseController.approveHouse
+);
+
+router.patch(
+  "/:id/reject",
+  auth,
+  role("ADMIN", "SUPER_ADMIN"),
+  houseController.rejectHouse
 );
 
 router.patch(

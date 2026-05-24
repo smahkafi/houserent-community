@@ -5,6 +5,7 @@ import authRoutes from "./modules/auth/auth.route.js";
 import adminRoutes from "./modules/admin/admin.route.js";
 import bookingRoutes from "./modules/booking/booking.route.js";
 import houseRoutes from "./modules/house/house.route.js";
+import rentalUnitRoutes from "./modules/rentalUnit/rentalUnit.route.js";
 import rentalApplicationRoutes from "./modules/rentalApplication/rentalApplication.route.js";
 import rentalAgreementRoutes from "./modules/rentalAgreement/rentalAgreement.route.js";
 import settingsRoutes from "./modules/admin/settings.route.js";
@@ -18,13 +19,13 @@ app.use(cors({
 
 app.use(express.json());
 
-// Routes
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/admin", settingsRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/houses", houseRoutes);
+app.use("/api/rental-units", rentalUnitRoutes);
 app.use("/api/rental-applications", rentalApplicationRoutes);
 app.use("/api/rental-agreements", rentalAgreementRoutes);
 
