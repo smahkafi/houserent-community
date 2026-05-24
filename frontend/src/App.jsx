@@ -16,6 +16,9 @@ import BookingRequestsPage from "./pages/landlord/BookingRequestsPage.jsx";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage.jsx";
 import AdminHousesPage from "./pages/admin/AdminHousesPage.jsx";
 import AdminRentalUnitsPage from "./pages/admin/AdminRentalUnitsPage.jsx";
+import ResidentDashboardPage from "./pages/resident/ResidentDashboardPage.jsx";
+import ReportProblemPage from "./pages/resident/ReportProblemPage.jsx";
+import MyReportsPage from "./pages/resident/MyReportsPage.jsx";
 import { getToken, getUser } from "./utils/auth";
 
 function ProtectedRoute({ children, allowedRoles }) {
@@ -51,13 +54,15 @@ function App() {
           <Route path="/landlord/houses/:houseId/add-unit" element={<ProtectedRoute allowedRoles={["LANDLORD"]}><AddRentalUnitPage /></ProtectedRoute>} />
           <Route path="/landlord/bookings" element={<ProtectedRoute allowedRoles={["LANDLORD"]}><BookingRequestsPage /></ProtectedRoute>} />
 
+          {/* Resident */}
+          <Route path="/resident/dashboard" element={<ProtectedRoute allowedRoles={["RESIDENT"]}><ResidentDashboardPage /></ProtectedRoute>} />
+          <Route path="/resident/report" element={<ProtectedRoute allowedRoles={["RESIDENT"]}><ReportProblemPage /></ProtectedRoute>} />
+          <Route path="/resident/my-reports" element={<ProtectedRoute allowedRoles={["RESIDENT"]}><MyReportsPage /></ProtectedRoute>} />
+
           {/* Admin */}
           <Route path="/admin/dashboard" element={<ProtectedRoute allowedRoles={["ADMIN", "SUPER_ADMIN"]}><AdminDashboardPage /></ProtectedRoute>} />
           <Route path="/admin/houses" element={<ProtectedRoute allowedRoles={["ADMIN", "SUPER_ADMIN"]}><AdminHousesPage /></ProtectedRoute>} />
           <Route path="/admin/rental-units" element={<ProtectedRoute allowedRoles={["ADMIN", "SUPER_ADMIN"]}><AdminRentalUnitsPage /></ProtectedRoute>} />
-
-          {/* Resident */}
-          <Route path="/resident/dashboard" element={<ProtectedRoute allowedRoles={["RESIDENT"]}><div className="p-10 text-white">Resident Dashboard — Coming Soon</div></ProtectedRoute>} />
 
           {/* Super Admin */}
           <Route path="/super-admin/dashboard" element={<ProtectedRoute allowedRoles={["SUPER_ADMIN"]}><div className="p-10 text-white">Super Admin Dashboard — Coming Soon</div></ProtectedRoute>} />
