@@ -13,6 +13,9 @@ import MyHousesPage from "./pages/landlord/MyHousesPage.jsx";
 import HouseDetailPage from "./pages/landlord/HouseDetailPage.jsx";
 import AddRentalUnitPage from "./pages/landlord/AddRentalUnitPage.jsx";
 import BookingRequestsPage from "./pages/landlord/BookingRequestsPage.jsx";
+import AdminDashboardPage from "./pages/admin/AdminDashboardPage.jsx";
+import AdminHousesPage from "./pages/admin/AdminHousesPage.jsx";
+import AdminRentalUnitsPage from "./pages/admin/AdminRentalUnitsPage.jsx";
 import { getToken, getUser } from "./utils/auth";
 
 function ProtectedRoute({ children, allowedRoles }) {
@@ -48,11 +51,13 @@ function App() {
           <Route path="/landlord/houses/:houseId/add-unit" element={<ProtectedRoute allowedRoles={["LANDLORD"]}><AddRentalUnitPage /></ProtectedRoute>} />
           <Route path="/landlord/bookings" element={<ProtectedRoute allowedRoles={["LANDLORD"]}><BookingRequestsPage /></ProtectedRoute>} />
 
+          {/* Admin */}
+          <Route path="/admin/dashboard" element={<ProtectedRoute allowedRoles={["ADMIN", "SUPER_ADMIN"]}><AdminDashboardPage /></ProtectedRoute>} />
+          <Route path="/admin/houses" element={<ProtectedRoute allowedRoles={["ADMIN", "SUPER_ADMIN"]}><AdminHousesPage /></ProtectedRoute>} />
+          <Route path="/admin/rental-units" element={<ProtectedRoute allowedRoles={["ADMIN", "SUPER_ADMIN"]}><AdminRentalUnitsPage /></ProtectedRoute>} />
+
           {/* Resident */}
           <Route path="/resident/dashboard" element={<ProtectedRoute allowedRoles={["RESIDENT"]}><div className="p-10 text-white">Resident Dashboard — Coming Soon</div></ProtectedRoute>} />
-
-          {/* Admin */}
-          <Route path="/admin/dashboard" element={<ProtectedRoute allowedRoles={["ADMIN", "SUPER_ADMIN"]}><div className="p-10 text-white">Admin Dashboard — Coming Soon</div></ProtectedRoute>} />
 
           {/* Super Admin */}
           <Route path="/super-admin/dashboard" element={<ProtectedRoute allowedRoles={["SUPER_ADMIN"]}><div className="p-10 text-white">Super Admin Dashboard — Coming Soon</div></ProtectedRoute>} />
