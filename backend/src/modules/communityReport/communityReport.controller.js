@@ -6,7 +6,13 @@ import {
 
 const createReport = async (req, res) => {
   try {
-    const data = createReportSchema.parse(req.body);
+    const body = {
+      ...req.body,
+      affectedHouseIds: req.body.affectedHouseIds
+        ? JSON.parse(req.body.affectedHouseIds)
+        : [],
+    };
+    const data = createReportSchema.parse(body);
     const imageUrls = req.files ? req.files.map((f) => f.path) : [];
     const result = await communityReportService.createReport(req.user.userId, data, imageUrls);
     return res.status(201).json({ success: true, message: "Report submitted successfully", data: result });

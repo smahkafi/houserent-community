@@ -6,6 +6,7 @@ const createReport = async (userId, payload, imageUrls = []) => {
       ...payload,
       reportedById: userId,
       imageUrls: imageUrls.length > 0 ? imageUrls : [],
+      affectedHouseIds: payload.affectedHouseIds || [],
     },
   });
 };

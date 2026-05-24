@@ -5,6 +5,7 @@ export const createReportSchema = z.object({
   description: z.string().min(10),
   category: z.enum(["ROAD", "ELECTRICITY", "WATER", "GAS", "SECURITY", "SANITATION", "OTHER"]),
   location: z.string().min(3),
+  affectedHouseIds: z.array(z.number()).optional().default([]),
 });
 
 export const updateReportStatusSchema = z.object({
