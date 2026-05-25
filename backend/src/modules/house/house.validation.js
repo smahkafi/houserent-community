@@ -3,16 +3,26 @@ import { z } from "zod";
 export const createHouseSchema = z.object({
   title: z.string().min(3),
   description: z.string().min(10),
-  address: z.string().min(3),
+  houseNo: z.string().min(1),
+  plotNo: z.string().optional().nullable(),
+  roadNo: z.string().optional().nullable(),
+  address: z.string().optional().nullable(),
   area: z.string().min(2),
+  mapLocation: z.string().min(3),
+  unionName: z.string().optional().nullable(),
   totalFloors: z.number().int().min(1).optional().nullable(),
 });
 
 export const updateHouseSchema = z.object({
   title: z.string().min(3).optional(),
   description: z.string().min(10).optional(),
-  address: z.string().min(3).optional(),
+  houseNo: z.string().min(1).optional(),
+  plotNo: z.string().optional().nullable(),
+  roadNo: z.string().optional().nullable(),
+  address: z.string().optional().nullable(),
   area: z.string().min(2).optional(),
+  mapLocation: z.string().min(3).optional(),
+  unionName: z.string().optional().nullable(),
   totalFloors: z.number().int().min(1).optional().nullable(),
 });
 

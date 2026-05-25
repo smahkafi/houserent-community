@@ -30,8 +30,14 @@ model House {
   id              Int         @id @default(autoincrement())
   title           String
   description     String
-  address         String
+  houseNo         String
+  plotNo          String?
+  roadNo          String?
+  address         String?
   area            String
+  mapLocation     String
+  unionName       String?
+  imageUrl        String?
   totalFloors     Int?
   status          HouseStatus @default(PENDING)
   rejectionReason String?
