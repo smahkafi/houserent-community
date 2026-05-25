@@ -23,11 +23,9 @@ function ReportProblemPage() {
   const [previews, setPreviews] = useState([]);
   const [houses, setHouses] = useState([]);
   const [selectedHouses, setSelectedHouses] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    category: "",
-    location: "",
+    title: "", description: "", category: "", location: "",
   });
 
   useEffect(() => {
@@ -42,6 +40,15 @@ function ReportProblemPage() {
     fetchHouses();
   }, []);
 
+  const filteredHouses = houses.filter((house) => {
+    const q = searchQuery.toLowerCase();
+    return (
+      house.houseNo?.toLowerCase().includes(q) ||
+      house.title?.toLowerCase().includes(q) ||
+      house.landlord?.fullName?.toLowerCase().includes(q)
+    );
+  });
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -49,13 +56,9 @@ function ReportProblemPage() {
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-    if (files.length > 5) {
-      setError("Maximum 5 images allowed");
-      return;
-    }
+    if (files.length > 5) { setError("Maximum 5 images allowed"); return; }
     setImages(files);
-    const urls = files.map((f) => URL.createObjectURL(f));
-    setPreviews(urls);
+    setPreviews(files.map((f) => URL.createObjectURL(f)));
     setError("");
   };
 
@@ -66,9 +69,7 @@ function ReportProblemPage() {
 
   const toggleHouse = (houseId) => {
     setSelectedHouses((prev) =>
-      prev.includes(houseId)
-        ? prev.filter((id) => id !== houseId)
-        : [...prev, houseId]
+      prev.includes(houseId) ? prev.filter((id) => id !== houseId) : [...prev, houseId]
     );
   };
 
@@ -87,10 +88,7 @@ function ReportProblemPage() {
       images.forEach((img) => form.append("images", img));
 
       await axios.post(`${API_BASE_URL}/community-reports`, form, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
       });
       setSuccess(true);
     } catch (err) {
@@ -108,7 +106,7 @@ function ReportProblemPage() {
         <p className="mt-2 text-sm text-slate-300">Your report has been submitted. Admin will review it shortly.</p>
         <div className="mt-6 flex gap-3">
           <button onClick={() => navigate("/resident/my-reports")} className="flex-1 rounded-2xl bg-emerald-400 px-4 py-2 text-sm font-bold text-slate-950 transition hover:bg-emerald-300">My Reports</button>
-          <button onClick={() => { setSuccess(false); setFormData({ title: "", description: "", category: "", location: "" }); setImages([]); setPreviews([]); setSelectedHouses([]); }} className="flex-1 rounded-2xl border border-white/10 px-4 py-2 text-sm font-medium text-slate-200 transition hover:border-emerald-300/50">New Report</button>
+          <button onClick={() => { setSuccess(false); setFormData({ title: "", description: "", category: "", location: "" }); setImages([]); setPreviews([]); setSelectedHouses([]); setSearchQuery(""); }} className="flex-1 rounded-2xl border border-white/10 px-4 py-2 text-sm font-medium text-slate-200 transition hover:border-emerald-300/50">New Report</button>
         </div>
       </div>
     </div>
@@ -128,129 +126,105 @@ function ReportProblemPage() {
         </div>
 
         <div className="rounded-3xl border border-white/10 bg-white/5 p-7 backdrop-blur-md">
-          {error && (
-            <div className="mb-6 rounded-2xl border border-red-400/30 bg-red-500/10 p-4 text-sm text-red-100">{error}</div>
-          )}
+          {error && <div className="mb-6 rounded-2xl border border-red-400/30 bg-red-500/10 p-4 text-sm text-red-100">{error}</div>}
 
           <form onSubmit={handleSubmit} className="space-y-5">
 
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-200">
-                Title <span className="text-red-400">*</span>
-              </label>
-              <input
-                type="text"
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
+              <label className="mb-2 block text-sm font-medium text-slate-200">Title <span className="text-red-400">*</span></label>
+              <input type="text" name="title" value={formData.title} onChange={handleChange}
                 placeholder="e.g. Broken road near mosque"
-                className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-emerald-300"
-                required
-              />
+                className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-emerald-300" required />
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-200">
-                Category <span className="text-red-400">*</span>
-              </label>
-              <select
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-                className="w-full rounded-2xl border border-white/10 bg-slate-800 px-4 py-3 text-white outline-none transition focus:border-emerald-300"
-                required
-              >
+              <label className="mb-2 block text-sm font-medium text-slate-200">Category <span className="text-red-400">*</span></label>
+              <select name="category" value={formData.category} onChange={handleChange}
+                className="w-full rounded-2xl border border-white/10 bg-slate-800 px-4 py-3 text-white outline-none transition focus:border-emerald-300" required>
                 <option value="">Select a category</option>
-                {CATEGORIES.map((cat) => (
-                  <option key={cat.value} value={cat.value}>{cat.label}</option>
-                ))}
+                {CATEGORIES.map((cat) => <option key={cat.value} value={cat.value}>{cat.label}</option>)}
               </select>
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-200">
-                Location <span className="text-red-400">*</span>
-              </label>
+              <label className="mb-2 block text-sm font-medium text-slate-200">Location <span className="text-red-400">*</span></label>
+              <input type="text" name="location" value={formData.location} onChange={handleChange}
+                placeholder="e.g. Road 5, Block B, Mirpur"
+                className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-emerald-300" required />
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-200">Description <span className="text-red-400">*</span></label>
+              <textarea name="description" value={formData.description} onChange={handleChange}
+                placeholder="Describe the problem in detail..." rows={4}
+                className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-emerald-300" required />
+            </div>
+
+            {/* Affected Houses with Search */}
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-200">Affected Houses (optional)</label>
+              <p className="mb-3 text-xs text-slate-400">Search by house no, house name or landlord name.</p>
               <input
                 type="text"
-                name="location"
-                value={formData.location}
-                onChange={handleChange}
-                placeholder="e.g. Road 5, Block B, Mirpur"
-                className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-emerald-300"
-                required
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search houses..."
+                className="mb-3 w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-emerald-300"
               />
-            </div>
-
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-200">
-                Description <span className="text-red-400">*</span>
-              </label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                placeholder="Describe the problem in detail..."
-                rows={4}
-                className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-emerald-300"
-                required
-              />
-            </div>
-
-            {/* Affected Houses */}
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-200">
-                Affected Houses (optional)
-              </label>
-              <p className="mb-3 text-xs text-slate-400">Select the houses near this problem area.</p>
-              {houses.length === 0 ? (
-                <p className="text-sm text-slate-500">No approved houses available.</p>
-              ) : (
+              {searchQuery && (
                 <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
-                  {houses.map((house) => (
-                    <label
-                      key={house.id}
-                      className={`flex cursor-pointer items-center gap-3 rounded-2xl border px-4 py-3 transition ${
-                        selectedHouses.includes(house.id)
-                          ? "border-emerald-300/50 bg-emerald-400/10"
-                          : "border-white/10 bg-white/5 hover:border-white/20"
-                      }`}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={selectedHouses.includes(house.id)}
-                        onChange={() => toggleHouse(house.id)}
-                        className="h-4 w-4 accent-emerald-400"
-                      />
-                      <div>
-                        <p className="text-sm font-medium text-white">{house.title}</p>
-                        <p className="text-xs text-slate-400">📍 {house.address}, {house.area}</p>
-                      </div>
-                    </label>
-                  ))}
+                  {filteredHouses.length === 0 ? (
+                    <p className="text-sm text-slate-500">No houses found.</p>
+                  ) : (
+                    filteredHouses.map((house) => (
+                      <label
+                        key={house.id}
+                        className={`flex cursor-pointer items-center gap-3 rounded-2xl border px-4 py-3 transition ${
+                          selectedHouses.includes(house.id)
+                            ? "border-emerald-300/50 bg-emerald-400/10"
+                            : "border-white/10 bg-white/5 hover:border-white/20"
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedHouses.includes(house.id)}
+                          onChange={() => toggleHouse(house.id)}
+                          className="h-4 w-4 accent-emerald-400"
+                        />
+                        <div>
+                          <p className="text-sm font-medium text-white">
+                            {house.houseNo} | {house.landlord?.fullName} | {house.title}
+                          </p>
+                          <p className="text-xs text-slate-400">📍 {house.area}</p>
+                        </div>
+                      </label>
+                    ))
+                  )}
                 </div>
               )}
               {selectedHouses.length > 0 && (
-                <p className="mt-2 text-xs text-emerald-300">{selectedHouses.length} house(s) selected</p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {selectedHouses.map((id) => {
+                    const h = houses.find((h) => h.id === id);
+                    return h ? (
+                      <span key={id} className="flex items-center gap-1 rounded-full bg-emerald-400/10 border border-emerald-300/20 px-3 py-1 text-xs text-emerald-300">
+                        {h.houseNo} | {h.title}
+                        <button type="button" onClick={() => toggleHouse(id)} className="ml-1 text-emerald-400 hover:text-red-300">✕</button>
+                      </span>
+                    ) : null;
+                  })}
+                </div>
               )}
             </div>
 
             {/* Image Upload */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-200">
-                Images (max 5)
-              </label>
+              <label className="mb-2 block text-sm font-medium text-slate-200">Images (max 5)</label>
               <label className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-white/20 bg-white/5 px-4 py-6 transition hover:border-emerald-300/50 hover:bg-emerald-400/5">
                 <p className="text-2xl">📷</p>
                 <p className="mt-2 text-sm text-slate-300">Click to upload images</p>
                 <p className="text-xs text-slate-500">JPG, PNG, WEBP — max 5MB each</p>
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={handleImageChange}
-                  className="hidden"
-                />
+                <input type="file" accept="image/*" multiple onChange={handleImageChange} className="hidden" />
               </label>
               {previews.length > 0 && (
                 <div className="mt-3 grid grid-cols-3 gap-2">
@@ -264,17 +238,13 @@ function ReportProblemPage() {
               )}
             </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full rounded-2xl bg-emerald-400 px-5 py-3 font-bold text-slate-950 shadow-lg shadow-emerald-950/30 transition hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-60"
-            >
+            <button type="submit" disabled={loading}
+              className="w-full rounded-2xl bg-emerald-400 px-5 py-3 font-bold text-slate-950 shadow-lg shadow-emerald-950/30 transition hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-60">
               {loading ? "Submitting..." : "Submit Report"}
             </button>
 
           </form>
         </div>
-
       </div>
     </div>
   );
