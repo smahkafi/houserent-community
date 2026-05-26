@@ -10,7 +10,7 @@ export const createHouseSchema = z.object({
   area: z.string().min(2),
   mapLocation: z.string().min(3),
   unionName: z.string().optional().nullable(),
-  totalFloors: z.number().int().min(1).optional().nullable(),
+  totalFloors: z.union([z.number(), z.string()]).transform((v) => v ? parseInt(v) : null).optional().nullable(),
 });
 
 export const updateHouseSchema = z.object({
@@ -23,7 +23,7 @@ export const updateHouseSchema = z.object({
   area: z.string().min(2).optional(),
   mapLocation: z.string().min(3).optional(),
   unionName: z.string().optional().nullable(),
-  totalFloors: z.number().int().min(1).optional().nullable(),
+  totalFloors: z.union([z.number(), z.string()]).transform((v) => v ? parseInt(v) : null).optional().nullable(),
 });
 
 export const rejectHouseSchema = z.object({
